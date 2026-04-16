@@ -31,7 +31,7 @@
 </svelte:head>
 <ModeWatcher />
 
-<div class="app-shell">
+<div class="flex flex-col overflow-hidden h-[100dvh] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
 	<AppHeader>
 		{#snippet actions()}
 			<AuthButton />
@@ -39,7 +39,7 @@
 		{/snippet}
 	</AppHeader>
 
-	<main class="app-content">
+	<main class="flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
 		{@render children()}
 	</main>
 

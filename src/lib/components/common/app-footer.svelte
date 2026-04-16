@@ -8,23 +8,10 @@
 	} = $props();
 </script>
 
-<footer class="app-footer">
+<footer class="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
 	{#if children}
-		<nav class="app-footer__nav" aria-label="Main navigation">
+		<nav class="flex h-14 items-center justify-around px-2" aria-label="Main navigation">
 			{@render children()}
 		</nav>
 	{/if}
 </footer>
-
-<style>
-	@reference '$routes/layout.css';
-
-	.app-footer {
-		@apply border-t border-border bg-card;
-		padding-bottom: env(safe-area-inset-bottom);
-	}
-
-	.app-footer__nav {
-		@apply flex h-14 items-center justify-around px-2;
-	}
-</style>

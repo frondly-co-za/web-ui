@@ -43,7 +43,7 @@
 			<DropdownMenuContent align="end">
 				<DropdownMenuLabel>
 					<div>{auth.user?.name}</div>
-					<div class="email">{auth.user?.email}</div>
+					<div class="text-xs font-normal text-muted-foreground">{auth.user?.email}</div>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onSelect={() => goto(resolve('/logout'))}>Log out</DropdownMenuItem>
@@ -53,11 +53,3 @@
 		<Button size="sm" href={loginHref}>Log in</Button>
 	{/if}
 {/if}
-
-<style>
-	@reference '$routes/layout.css';
-
-	.email {
-		@apply text-xs font-normal text-muted-foreground;
-	}
-</style>

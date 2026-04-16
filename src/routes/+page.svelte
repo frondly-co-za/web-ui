@@ -27,25 +27,14 @@
 			{#if status === 'loading'}
 				<Spinner class="size-5" />
 			{:else}
-				<span class="api-status" data-online={status === 'online'}>
+				<span
+					class="font-medium"
+					class:text-primary={status === 'online'}
+					class:text-destructive={status === 'offline'}
+				>
 					Status: {status === 'online' ? 'Online' : 'Offline'}
 				</span>
 			{/if}
 		</Card.Content>
 	</Card.Root>
 </Container>
-
-<style>
-	@reference '$routes/layout.css';
-	.api-status {
-		@apply font-medium;
-
-		&[data-online='true'] {
-			@apply text-primary;
-		}
-
-		&[data-online='false'] {
-			@apply text-destructive;
-		}
-	}
-</style>

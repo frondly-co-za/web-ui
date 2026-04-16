@@ -34,9 +34,10 @@ npx vitest run src/lib/path/to/file.spec.ts
 
 **Styling:** Tailwind CSS 4 via the @tailwindcss/vite plugin. The global stylesheet at src/routes/layout.css defines the Frondly theme: a green-tinted oklch() palette exposed as CSS custom properties (--primary, --background, --card, etc.) and mapped into Tailwind via @theme inline. Font is Figtree Variable. Dark mode uses the .dark class variant.
 
-**CSS conventions:** Svelte components are the semantic unit — a <Panel> component is preferable to a .panel class. Never write utility classes directly in markup. Instead, define meaningful class names and apply Tailwind utilities inside them:
+**CSS conventions:** Svelte components are the semantic unit — a `<Panel>` component is preferable to a `.panel` class. Within components, write Tailwind utility classes directly in the markup rather than defining named CSS classes with `@apply`.
 
-- Component-scoped styles belong in that component's `<style>` block using `@apply`
+- **Colors:** always use the theme's semantic palette classes (`text-foreground`, `bg-card`, `text-primary`, `text-muted-foreground`, etc.) — never embed raw color values or non-semantic Tailwind color classes (e.g. `text-green-500`) in markup
+- Component `<style>` blocks are reserved for CSS that cannot be expressed as a Tailwind utility (e.g. vendor-prefixed properties)
 - Styles that are genuinely global (typography, resets, base surface tokens) belong in `src/routes/layout.css`
 
 **Shared code:** `src/lib/` — importable as `$lib/...` throughout the app. `src/lib/index.ts` is the barrel export.
