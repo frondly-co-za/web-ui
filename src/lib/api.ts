@@ -1,9 +1,9 @@
-import { auth } from '$lib/auth.svelte'
+import { auth } from '$lib/auth.svelte';
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
-	const token = await auth.getAccessToken()
+	const token = await auth.getAccessToken();
 
 	const response = await fetch(`${baseUrl}${path}`, {
 		...init,
@@ -12,13 +12,13 @@ async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
 			...init.headers,
 			Authorization: `Bearer ${token}`
 		}
-	})
+	});
 
 	if (!response.ok) {
-		throw new Error(`API error ${response.status}: ${await response.text()}`)
+		throw new Error(`API error ${response.status}: ${await response.text()}`);
 	}
 
-	return response.json() as Promise<T>
+	return response.json() as Promise<T>;
 }
 
 export const api = {
@@ -29,8 +29,7 @@ export const api = {
 		apiFetch<T>(path, { ...init, method: 'PUT', body: JSON.stringify(body) }),
 	patch: <T>(path: string, body: unknown, init?: RequestInit) =>
 		apiFetch<T>(path, { ...init, method: 'PATCH', body: JSON.stringify(body) }),
-	delete: <T>(path: string, init?: RequestInit) =>
-		apiFetch<T>(path, { ...init, method: 'DELETE' }),
+	delete: <T>(path: string, init?: RequestInit) => apiFetch<T>(path, { ...init, method: 'DELETE' }),
 
 	health: () => api.get<{ status: string }>('/health')
-}
+};

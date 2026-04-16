@@ -31,7 +31,9 @@
 </svelte:head>
 <ModeWatcher />
 
-<div class="flex flex-col overflow-hidden h-[100dvh] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+<div
+	class="flex h-[100dvh] flex-col overflow-hidden pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]"
+>
 	<AppHeader>
 		{#snippet actions()}
 			<AuthButton />
