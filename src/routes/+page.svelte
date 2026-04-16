@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Container } from '$lib/components/common';
+	// noinspection ES6UnusedImports
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { api } from '$lib/api';
