@@ -46,7 +46,8 @@ For plant care, rain below ~2 mm is not enough to meaningfully water soil — it
 Request both `hourly` and `daily` variables in one call using `timezone=auto`. Hourly data drives current conditions (find the hour slot matching `Date.now()`); daily data drives the today-summary and next-rain scan.
 
 Variables requested:
-- **Hourly:** `temperature_2m`, `precipitation`, `weather_code`  
+
+- **Hourly:** `temperature_2m`, `precipitation`, `weather_code`
 - **Daily:** `weather_code`, `temperature_2m_max`, `temperature_2m_min`, `precipitation_sum`, `sunrise`, `sunset`
 
 ### 6. No `apiFetch` wrapper — plain `fetch`

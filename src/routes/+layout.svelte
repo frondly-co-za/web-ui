@@ -5,7 +5,7 @@
 	import { pwaInfo } from 'virtual:pwa-info';
 	import favicon from '$lib/assets/favicon.svg';
 	import { AppHeader, AppFooter, AuthButton, ModeToggle } from '$lib/components/common';
-	import { initSyncTrigger } from '$lib/sync/syncTrigger';
+	import { initSyncTrigger } from '$lib/sync/syncTrigger.svelte';
 
 	let { children } = $props();
 

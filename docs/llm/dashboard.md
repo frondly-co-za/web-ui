@@ -31,24 +31,25 @@ The widget has four display states, driven by a single `$state`:
 
 ```ts
 type WeatherState =
-  | { status: 'loading' }
-  | { status: 'offline' }
-  | { status: 'no-location' }   // geolocation denied or unavailable
-  | { status: 'error'; message: string }
-  | { status: 'ready'; data: WeatherData }
+	| { status: 'loading' }
+	| { status: 'offline' }
+	| { status: 'no-location' } // geolocation denied or unavailable
+	| { status: 'error'; message: string }
+	| { status: 'ready'; data: WeatherData };
 ```
 
 ### Location resolution
 
 On mount:
+
 1. Check `localStorage.getItem('frondly:weather:coords')`. If present and valid JSON `{ lat, lng, cachedAt }`, use it (no expiry — coords are stable).
 2. Otherwise call `navigator.geolocation.getCurrentPosition()`. On success, write to `localStorage` and proceed. On failure/denial, transition to `no-location` state.
 
 ```ts
 interface CachedCoords {
-  lat: number
-  lng: number
-  cachedAt: number   // Date.now()
+	lat: number;
+	lng: number;
+	cachedAt: number; // Date.now()
 }
 ```
 
@@ -72,29 +73,29 @@ Response shape (relevant fields):
 
 ```ts
 interface OpenMeteoResponse {
-  timezone: string
-  hourly: {
-    time: string[]              // ISO datetime strings, one per hour
-    temperature_2m: number[]
-    precipitation: number[]
-    weather_code: number[]
-  }
-  daily: {
-    time: string[]              // ISO date strings (YYYY-MM-DD)
-    weather_code: number[]
-    temperature_2m_max: number[]
-    temperature_2m_min: number[]
-    precipitation_sum: number[]
-    sunrise: string[]
-    sunset: string[]
-  }
+	timezone: string;
+	hourly: {
+		time: string[]; // ISO datetime strings, one per hour
+		temperature_2m: number[];
+		precipitation: number[];
+		weather_code: number[];
+	};
+	daily: {
+		time: string[]; // ISO date strings (YYYY-MM-DD)
+		weather_code: number[];
+		temperature_2m_max: number[];
+		temperature_2m_min: number[];
+		precipitation_sum: number[];
+		sunrise: string[];
+		sunset: string[];
+	};
 }
 ```
 
 Export a single async function from `openMeteo.ts`:
 
 ```ts
-export async function fetchWeather(lat: number, lng: number): Promise<WeatherData>
+export async function fetchWeather(lat: number, lng: number): Promise<WeatherData>;
 ```
 
 It should call fetch, parse the JSON, and transform it into the `WeatherData` shape (see below). Throw on non-2xx.
@@ -103,26 +104,26 @@ It should call fetch, parse the JSON, and transform it into the `WeatherData` sh
 
 ```ts
 interface WeatherData {
-  today: {
-    high: number          // daily.temperature_2m_max[0]
-    low: number           // daily.temperature_2m_min[0]
-    weatherCode: number   // daily.weather_code[0]
-    precipitationSum: number  // daily.precipitation_sum[0] in mm
-    sunrise: string       // daily.sunrise[0]
-    sunset: string        // daily.sunset[0]
-  }
-  current: {
-    temperature: number   // hourly value at current hour index
-    weatherCode: number
-    precipitation: number // mm in this hour
-  }
-  nextRain: NextRain | null
+	today: {
+		high: number; // daily.temperature_2m_max[0]
+		low: number; // daily.temperature_2m_min[0]
+		weatherCode: number; // daily.weather_code[0]
+		precipitationSum: number; // daily.precipitation_sum[0] in mm
+		sunrise: string; // daily.sunrise[0]
+		sunset: string; // daily.sunset[0]
+	};
+	current: {
+		temperature: number; // hourly value at current hour index
+		weatherCode: number;
+		precipitation: number; // mm in this hour
+	};
+	nextRain: NextRain | null;
 }
 
 interface NextRain {
-  date: string            // YYYY-MM-DD from daily.time
-  precipitationSum: number
-  weatherCode: number
+	date: string; // YYYY-MM-DD from daily.time
+	precipitationSum: number;
+	weatherCode: number;
 }
 ```
 
@@ -131,20 +132,20 @@ interface NextRain {
 **Next rain algorithm:**
 
 ```ts
-const MEANINGFUL_RAIN_MM = 2
+const MEANINGFUL_RAIN_MM = 2;
 
 function findNextRain(daily: OpenMeteoResponse['daily']): NextRain | null {
-  // Skip index 0 (today). Scan days 1..6.
-  for (let i = 1; i < daily.time.length; i++) {
-    if (daily.precipitation_sum[i] >= MEANINGFUL_RAIN_MM) {
-      return {
-        date: daily.time[i],
-        precipitationSum: daily.precipitation_sum[i],
-        weatherCode: daily.weather_code[i],
-      }
-    }
-  }
-  return null
+	// Skip index 0 (today). Scan days 1..6.
+	for (let i = 1; i < daily.time.length; i++) {
+		if (daily.precipitation_sum[i] >= MEANINGFUL_RAIN_MM) {
+			return {
+				date: daily.time[i],
+				precipitationSum: daily.precipitation_sum[i],
+				weatherCode: daily.weather_code[i]
+			};
+		}
+	}
+	return null;
 }
 ```
 
@@ -154,25 +155,24 @@ function findNextRain(daily: OpenMeteoResponse['daily']): NextRain | null {
 
 WMO code groups to icon/label:
 
-| Code(s) | Label | Icon suggestion |
-|---------|-------|-----------------|
-| 0 | Clear sky | ☀️ sun |
-| 1 | Mainly clear | 🌤 sun+cloud |
-| 2 | Partly cloudy | ⛅ |
-| 3 | Overcast | ☁️ |
-| 45, 48 | Foggy | 🌫 |
-| 51, 53, 55 | Drizzle | 🌦 |
-| 61, 63, 65 | Rain | 🌧 |
-| 71, 73, 75 | Snow | 🌨 |
-| 80, 81, 82 | Rain showers | 🌦 |
-| 95 | Thunderstorm | ⛈ |
-| 96, 99 | Thunderstorm + hail | ⛈ |
+| Code(s)    | Label               | Icon suggestion |
+| ---------- | ------------------- | --------------- |
+| 0          | Clear sky           | ☀️ sun          |
+| 1          | Mainly clear        | 🌤 sun+cloud    |
+| 2          | Partly cloudy       | ⛅              |
+| 3          | Overcast            | ☁️              |
+| 45, 48     | Foggy               | 🌫              |
+| 51, 53, 55 | Drizzle             | 🌦              |
+| 61, 63, 65 | Rain                | 🌧              |
+| 71, 73, 75 | Snow                | 🌨              |
+| 80, 81, 82 | Rain showers        | 🌦              |
+| 95         | Thunderstorm        | ⛈               |
+| 96, 99     | Thunderstorm + hail | ⛈               |
 
 Use hugeicons. Import pattern (mirrors `mode-toggle.svelte`):
 
 ```svelte
-import { HugeiconsIcon } from '@hugeicons/svelte'
-import { SunIcon, CloudIcon } from '@hugeicons/core-free-icons'
+import {HugeiconsIcon} from '@hugeicons/svelte' import {(SunIcon, CloudIcon)} from '@hugeicons/core-free-icons'
 
 <HugeiconsIcon icon={SunIcon} color="currentColor" strokeWidth={1.5} class="h-5 w-5" />
 ```
@@ -184,6 +184,7 @@ Browse available icons at hugeicons.com. Prefer icons from `@hugeicons/core-free
 Each component embeds its own loading skeleton — the skeleton must match the loaded layout precisely to prevent layout shifts. Do not use a generic spinner or a shared skeleton wrapper.
 
 For the weather widget, the skeleton has two rows matching the loaded state:
+
 - Row 1: a wide rect (icon placeholder) + two stacked rects (temp + high/low) + two small rects (precip/sunrise)
 - Row 2: a single medium rect (next-rain label)
 
@@ -193,14 +194,14 @@ Use the shadcn-svelte `Skeleton` component (`$lib/components/ui/skeleton`).
 
 ```svelte
 <script lang="ts">
-  import { connectivity } from '$lib/stores/connectivity.svelte'
+	import { connectivity } from '$lib/stores/connectivity.svelte';
 
-  // Re-fetch when app comes online (e.g. user was offline, reconnects)
-  $effect(() => {
-    if (connectivity.online) {
-      loadWeather()
-    }
-  })
+	// Re-fetch when app comes online (e.g. user was offline, reconnects)
+	$effect(() => {
+		if (connectivity.online) {
+			loadWeather();
+		}
+	});
 </script>
 ```
 
@@ -211,11 +212,13 @@ Guard `loadWeather()` with a check so it doesn't double-fetch on initial mount i
 The widget is a card (`bg-card` surface, rounded, padded). Two rows:
 
 **Row 1 — Today's summary:**
+
 - Left: large weather icon (from `WeatherCode`) + condition label
 - Center: current temperature (large, `text-foreground`), high/low in `text-muted-foreground`
 - Right: precipitation sum for today (if > 0), sunrise/sunset
 
 **Row 2 — Next rain:**
+
 - If `nextRain` is non-null: "Next rain: {weekday, e.g. Thursday} · {precipitationSum} mm"
 - If null: "No rain in the next 7 days"
 - If `status === 'offline'`: muted card with offline icon and text "Weather unavailable offline"
@@ -265,20 +268,13 @@ Matches the loaded layout: a vertical list of N skeleton rows, each shaped like 
 A vertical list of up to 10 care item cards, sorted `nextDue` ascending. Overdue and upcoming items appear in the same list — overdue items naturally float to the top since their dates are in the past.
 
 Each card:
+
 - Plant name + thumbnail (join via `plantId`)
 - Care type label and icon (from `careTypeClient`)
 - Due date: relative label — "Today", "Tomorrow", "In 3 days", or "2 days overdue"
 - Overdue visual indicator: warning colour on the date label and/or a left border accent
 
 A "Mark done" action logs a care entry via `careLogClient` (local-first write, synced later).
-
-### UI
-
-A vertical list of care item cards. Each card shows:
-- Plant name + thumbnail
-- Care type (water, fertilise, prune, etc.)
-- Due date relative label ("Today", "Tomorrow", "2 days overdue")
-- A "Mark done" action (which writes a care log via `careLogClient` — local-first write)
 
 ---
 
@@ -292,9 +288,9 @@ A vertical list of care item cards. Each card shows:
 ### Data fetching
 
 ```ts
-import { plantClient } from '$lib/clients/plantClient'
+import { plantClient } from '$lib/clients/plantClient';
 
-const plants = await plantClient.getAll()
+const plants = await plantClient.getAll();
 ```
 
 No online dependency. Works offline immediately.
@@ -302,6 +298,7 @@ No online dependency. Works offline immediately.
 ### UI
 
 A responsive card grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`). Each card shows:
+
 - Plant photo (or placeholder icon)
 - Common name
 - Last care date
@@ -314,15 +311,15 @@ A responsive card grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`). Each card 
 ```svelte
 <!-- src/routes/dashboard/+page.svelte -->
 <script lang="ts">
-  import WeatherWidget from '$lib/components/weather/WeatherWidget.svelte'
-  import UpcomingCare from '$lib/components/dashboard/UpcomingCare.svelte'
-  import MyPlants from '$lib/components/dashboard/MyPlants.svelte'
+	import WeatherWidget from '$lib/components/weather/WeatherWidget.svelte';
+	import UpcomingCare from '$lib/components/dashboard/UpcomingCare.svelte';
+	import MyPlants from '$lib/components/dashboard/MyPlants.svelte';
 </script>
 
 <div class="flex flex-col gap-6 p-4">
-  <WeatherWidget />
-  <UpcomingCare />
-  <MyPlants />
+	<WeatherWidget />
+	<UpcomingCare />
+	<MyPlants />
 </div>
 ```
 
