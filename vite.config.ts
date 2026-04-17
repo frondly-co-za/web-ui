@@ -1,8 +1,24 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
+import { createLogger } from 'vite';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
+
+const isTest = !!process.env.VITEST;
+
+// Suppress SvelteKit SSR module runner teardown noise in browser tests.
+// When Playwright closes the browser the transport disconnects; any in-flight
+// SSR evaluations log this error before the process exits — tests still pass.
+function createFilteredLogger() {
+	const logger = createLogger();
+	const originalError = logger.error.bind(logger);
+	logger.error = (msg, options) => {
+		if (msg.includes('transport was disconnected')) return;
+		originalError(msg, options);
+	};
+	return logger;
+}
 
 export default defineConfig({
 	server: {
@@ -39,7 +55,7 @@ export default defineConfig({
 				globPatterns: ['**/*.{js,css,html,svg,png,webp,woff,woff2}']
 			},
 			devOptions: {
-				enabled: true
+				enabled: !isTest // service worker disabled during test runs
 			}
 		})
 	],
@@ -48,6 +64,7 @@ export default defineConfig({
 		projects: [
 			{
 				extends: './vite.config.ts',
+				customLogger: createFilteredLogger(),
 				test: {
 					name: 'client',
 					browser: {
