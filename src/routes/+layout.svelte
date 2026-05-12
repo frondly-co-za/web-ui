@@ -4,8 +4,18 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import favicon from '$lib/assets/favicon.svg';
-	import { AppHeader, AppFooter, AuthButton, ModeToggle } from '$lib/components/common';
+	import {
+		AppHeader,
+		AppFooter,
+		AuthButton,
+		ConnectivityPill,
+		ModeToggle
+	} from '$lib/components/common';
+	import { footerStore } from '$lib/stores/footer.svelte';
 	import { initSyncTrigger } from '$lib/sync/syncTrigger.svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { Home01Icon } from '@hugeicons/core-free-icons';
+	import { Button } from '$lib/components/ui/button';
 
 	let { children } = $props();
 
@@ -39,6 +49,7 @@
 >
 	<AppHeader>
 		{#snippet actions()}
+			<ConnectivityPill />
 			<AuthButton />
 			<ModeToggle />
 		{/snippet}
@@ -48,5 +59,14 @@
 		{@render children()}
 	</main>
 
-	<AppFooter />
+	<AppFooter>
+		{#if footerStore.snippet}
+			{@render footerStore.snippet()}
+		{:else}
+			<Button href="/" variant="ghost" class="h-auto flex-col gap-1 rounded-full px-5 py-2">
+				<HugeiconsIcon icon={Home01Icon} color="currentColor" strokeWidth={1.5} class="size-6" />
+				Home
+			</Button>
+		{/if}
+	</AppFooter>
 </div>

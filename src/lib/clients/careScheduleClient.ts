@@ -56,6 +56,15 @@ export const careScheduleClient = {
 		});
 	},
 
+	async getUpcoming(withinDays = 30, limit = 10): Promise<LocalCareSchedule[]> {
+		const horizon = new Date();
+		horizon.setDate(horizon.getDate() + withinDays);
+		return db.careSchedules
+			.filter((s) => s.syncDeleted === 0 && s.nextDue <= horizon.toISOString())
+			.sortBy('nextDue')
+			.then((results) => results.slice(0, limit));
+	},
+
 	async delete(id: string): Promise<void> {
 		await db.careSchedules.update(id, {
 			syncDeleted: 1,

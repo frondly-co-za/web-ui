@@ -50,3 +50,4 @@
 </script>
 
 <HugeiconsIcon icon={resolved.icon} color="currentColor" {strokeWidth} class={cls} />
+{resolved.label}

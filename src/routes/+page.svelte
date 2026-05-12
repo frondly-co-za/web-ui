@@ -1,41 +1,32 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Container } from '$lib/components/common';
-	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { api } from '$lib/api';
+	import WeatherWidget from '$lib/components/weather/WeatherWidget.svelte';
+	import UpcomingCare from '$lib/components/dashboard/UpcomingCare.svelte';
+	import MyPlants from '$lib/components/dashboard/MyPlants.svelte';
+	import { footerStore } from '$lib/stores/footer.svelte';
+	import { HugeiconsIcon } from '@hugeicons/svelte';
+	import { Plant01Icon } from '@hugeicons/core-free-icons';
+	import { Button } from '$lib/components/ui/button';
 
-	type Status = 'loading' | 'online' | 'offline';
-	let status = $state<Status>('loading');
-
-	onMount(async () => {
-		try {
-			const res = await api.health();
-			status = res.status === 'ok' ? 'online' : 'offline';
-		} catch {
-			status = 'offline';
-		}
+	$effect(() => {
+		footerStore.set(homeFooter);
+		return () => footerStore.set(undefined);
 	});
 </script>
 
+{#snippet homeFooter()}
+	<Button
+		href="/plants/new"
+		variant="ghost"
+		class="h-auto flex-col gap-1 rounded-full px-5 py-2"
+	>
+		<HugeiconsIcon icon={Plant01Icon} color="currentColor" strokeWidth={1.5} class="size-6" />
+		Add plant
+	</Button>
+{/snippet}
+
 <Container>
-	<Card.Root>
-		<Card.Header>
-			<Card.Title>Welcome to Frondly</Card.Title>
-		</Card.Header>
-		<Card.Content>
-			{#if status === 'loading'}
-				<Spinner class="size-5" />
-			{:else}
-				<span
-					class="font-medium"
-					class:text-primary={status === 'online'}
-					class:text-destructive={status === 'offline'}
-				>
-					Status: {status === 'online' ? 'Online' : 'Offline'}
-				</span>
-			{/if}
-		</Card.Content>
-	</Card.Root>
+	<WeatherWidget />
+	<UpcomingCare />
+	<MyPlants />
 </Container>
